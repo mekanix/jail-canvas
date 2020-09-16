@@ -1,0 +1,49 @@
+---
+- name: install canvas packages
+  with_items: "{{ canvas_packages }}"
+  package:
+    name: "{{ item.name }}"
+
+- name: configure www user
+  user:
+    name: www
+    shell: /bin/tcsh
+    home: /usr/local/www
+
+- name: create www dir 
+  file:
+    path: /usr/local/www
+    owner: www
+    group: www
+    state: directory
+
+- name: gather stats
+  stat:
+    path: "{{ canvas_root}}"
+
+- name: clone canvas repository
+  become: yes
+  become_user: www
+  shell: "git clone {{ canvas_repo_url }} {{ canvas_root }}"
+  args:
+    creates: "{{ canvas_root }}"
+
+- name: install ruby packages
+  bundler:
+    chdir: "{{ canvas_root }}"
+
+- name: install global node packages
+  with_items: "{{ canvas_node_packages }}"
+  shell: "yarn add {{ item.name }} --global"
+  args:
+    chdir: /root
+
+- name: setup cshrc template
+  template:
+    src: cshrc.j2
+    dest: /root/.cshrc
+
+- name: install node packages
+  shell: "yarn install --pure-lockfile --production"
+  args:
+    chdir: "{{ canvas_root }}"

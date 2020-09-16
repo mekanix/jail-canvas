@@ -1,0 +1,17 @@
+---
+canvas_packages:
+  - name: git-lite
+  - name: npm
+  - name: postgresql13-client
+  - name: python2
+  - name: ruby
+  - name: rubygem-bundler
+  - name: xmlsec1
+  - name: yarn
+
+canvas_node_packages:
+  - name: wsrun
+  - name: babel-cli
+
+canvas_root: /usr/local/www/canvas
+canvas_repo_url: "https://github.com/instructure/canvas-lms"
